@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <script src="pid.js"></script>
+        <script>
+            let updateConfig = () => {};
+            let restart = () => {};
+            window.onload = () => {
+                canvas = document.getElementById("gc");
+                context = canvas.getContext("2d");
+                sim = new Simulation(context, canvas);
+                referenceInput = document.getElementById("reference")
+                kpInput = document.getElementById("kp")
+                kiInput = document.getElementById("ki")
+                kdInput = document.getElementById("kd")
+                loadInput = document.getElementById("load")
+                updateConfig = () => {
+                    let reference = parseFloat(referenceInput.value) || 0.0;
+                    let kp = parseFloat(kpInput.value) || 0.0;
+                    let ki = parseFloat(kiInput.value) || 0.0;
+                    let kd = parseFloat(kdInput.value) || 0.0;
+                    let load = parseFloat(loadInput.value) || 0.0;
+                    sim.updateConfig(reference, kp, ki, kd, load);
+                };
+                restart = () => {
+                    updateConfig();
+                    sim.restart();
+                };
+                stop = () => {
+                    sim.stop();
+                };
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+            <canvas id="gc" width="1000" height="740" tabindex="1" style="display: inline-block;"></canvas>
+            <div style="display: inline-block;">
+                <h2>Reference</h2>
+                <input id="reference" type="number" value="300.0"  style="font: 1.5em sans-serif;"/>
+                <h2>Kp</h2>
+                <input id="kp" type="number" value="1.0"  style="font: 1.5em sans-serif;"/>
+                <h2>Ki</h2>
+                <input id="ki" type="number" value="0.0"  style="font: 1.5em sans-serif;"/>
+                <h2>Kd</h2>
+                <input id="kd" type="number" value="0.0"  style="font: 1.5em sans-serif;"/>
+                <h2>Load</h2>
+                <input id="load" type="number" value="0.0"  style="font: 1.5em sans-serif;"/>
+                <h2>Controls</h2>
+                <button onclick="updateConfig()" style="font: 1.5em sans-serif;">UPDATE</button>
+                <button onclick="restart()" style="font: 1.5em sans-serif;">RESTART</button>
+                <button onclick="stop()" style="font: 1.5em sans-serif;">STOP</button> 
+            </div>
+        </div>
+    </body>
+</html>
