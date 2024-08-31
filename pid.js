@@ -9,8 +9,6 @@ class Simulation {
         // Other configurations
         this.period = 50;
         this.dt = this.period / 1000;
-        this.vMax = 20;
-        this.vMin = -this.vMax;
         this.colors = {
             background: '#181818',
             guides: '#888888',
@@ -19,10 +17,9 @@ class Simulation {
         };
         this.guides_period = 50;
         this.guides_count = (this.height / this.guides_period) - 1;
-        this.objWidth = 30;
-        this.objHeight = 30;
-        this.yMin = this.objHeight / 2;
-        this.yMax = this.height - (this.objHeight / 2);
+        this.objRadius = 30;
+        this.yMin = this.objRadius;
+        this.yMax = this.height - this.objRadius;
         // Reset transform in case context has already been scaled
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         // Scale to underlying context size
@@ -97,12 +94,9 @@ class Simulation {
         this.context.lineTo(this.width, reference_y);
         this.context.stroke();
         // Object
-        let obj_x = (this.width / 2) - (this.objWidth / 2);
-        let obj_y = this.y - (this.objHeight / 2);
         this.context.fillStyle = this.colors.object;
-        //this.context.fillRect(obj_x, obj_y, this.objWidth, this.objHeight);
         this.context.beginPath();
-        this.context.arc(this.width / 2, obj_y, this.objWidth, 0, 2 * Math.PI);
+        this.context.arc(this.width / 2, this.y, this.objRadius, 0, 2 * Math.PI);
         this.context.fill();
     }
 
@@ -133,8 +127,9 @@ class Simulation {
 
     updateSystem() {
         this.pidOutput = this.PID(this.y, this.dt);
-        this.v = Math.min(Math.max(this.v + this.pidOutput + this.load, this.vMin), this.vMax)
-        this.y = Math.min(Math.max(this.y + this.v, this.yMin), this.yMax)
+        this.v *= 0.95; // Dampen speed to make it possible for the system to stabilize eventually
+        this.v += (this.pidOutput + this.load) * this.dt;
+        this.y += this.v * this.dt;
         console.log(`y=${this.y};v=${this.v};pid=${this.pidOutput};`)
     }
 
